@@ -1,8 +1,9 @@
 import csv
 
-companies = ['PETR4','CPLE6','VALE3','CIEL3']
+companies = ['PETR4','CPLE6','CIEL3']
+#companies = ['PETR4','CIEL3']
 emp = []
-temp = []
+#temp = []
 corrTable = []
 corrDict = {}
 
@@ -56,24 +57,20 @@ with open(ticker+'.SA.csv', 'r') as bvsp_file:
 		emp.append([line.pop('Date'), line.pop('Adj Close')])
 	pricesChosenCompany = getPricesOnly(emp, data) #precos da acao escolhida
 	sdChosenCompany = stdDev(pricesChosenCompany)
-	#meanChosenStock = meanCalc(pricesOnly)
+	meanChosenStock = meanCalc(pricesChosenCompany)
 	#print(sdChosenCompany)
-	#print(meanChosenStock)
+	print(meanChosenStock)
 
 for company in companies:
 	if(company != ticker):
+		temp = []
 		with open(company+'.SA.csv', 'r') as comp_file:
 			comp_reader = csv.DictReader(comp_file)
 			for line in comp_reader:
 				temp.append([line.pop('Date'), line.pop('Adj Close')])
 			pricesComparedCompany = getPricesOnly(temp, data) #precos da acao a ser comparada
-			for e in pricesComparedCompany:
-				print(e)
-				break
-			temp = []
-			print(meanCalc(pricesComparedCompany))
-			#sdComparedCompany = stdDev(pricesComparedCompany)
-			#covPrices = covarianceCalc(pricesChosenCompany, pricesComparedCompany)
-			#corr = covPrices/(sdChosenCompany*sdComparedCompany)
-			#corrDict[ticker+'-'+company] = corr
-#print(corrDict)
+			sdComparedCompany = stdDev(pricesComparedCompany)
+			covPrices = covarianceCalc(pricesChosenCompany, pricesComparedCompany)
+			corr = covPrices/(sdChosenCompany*sdComparedCompany)
+			corrDict[ticker+'-'+company] = corr
+print(corrDict)
